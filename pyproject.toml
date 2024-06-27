@@ -1,0 +1,99 @@
+[tool.poetry]
+name = "{{ cookiecutter.project_slug }}"
+version = "{{ cookiecutter.version }}"
+description = "{{ cookiecutter.project_short_description }}"
+repository = "{{ cookiecutter.repository_url }}"
+documentation = "{{ cookiecutter.documentation_url }}"
+authors = ["{{ cookiecutter.author_name }} <{{ cookiecutter.author_email }}>"]
+readme = "README.md"
+license = "{{ cookiecutter.open_source_license }}"
+keywords = [{% for keyword in cookiecutter.keywords.split(',') %}"{{ keyword.strip() }}", {% endfor %}]
+packages = [{ include = "{{ cookiecutter.project_slug }}", from = "src" }]
+
+[tool.poetry.scripts]
+{{ cookiecutter.project_slug }} = '{{ cookiecutter.project_slug }}.scripts:main'
+
+[tool.poetry.dependencies]
+python = "^{{ cookiecutter.python_version }}"
+loguru = "^0.7.2"
+matplotlib = "^3.8.3"
+mlflow = "^2.11.0"
+numpy = "^1.26.4"
+pandas = "^2.2.1"
+pandera = "^0.18.3"
+plotly = "^5.19.0"
+pyarrow = "^15.0.1"
+pydantic = "^2.6.4"
+pydantic-settings = "^2.2.1"
+scikit-learn = "^1.4.1"
+
+[tool.poetry.group.checks.dependencies]
+bandit = "^1.7.8"
+coverage = "^7.4.3"
+mypy = "^1.9.0"
+pytest = "^8.1.1"
+pytest-cov = "^4.1.0"
+pytest-xdist = "^3.5.0"
+pandera = { extras = ["mypy"], version = "^0.18.3" }
+ruff = "^0.3.3"
+
+[tool.poetry.group.commits.dependencies]
+commitizen = "^3.18.3"
+pre-commit = "^3.6.2"
+
+[tool.poetry.group.dev.dependencies]
+invoke = "^2.2.0"
+
+[tool.poetry.group.docs.dependencies]
+pdoc = "^14.4.0"
+
+[tool.poetry.group.notebooks.dependencies]
+ipykernel = "^6.29.3"
+nbformat = "^5.10.2"
+
+[tool.bandit]
+targets = ["src"]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "v$version"
+version_scheme = "pep440"
+version_provider = "poetry"
+changelog_start_rev = "v{{ cookiecutter.version }}"
+update_changelog_on_bump = true
+
+[tool.coverage.run]
+branch = true
+source = ["src"]
+omit = ["__main__.py"]
+
+[tool.mypy]
+pretty = true
+strict = true
+python_version = "{{ cookiecutter.python_version }}"
+check_untyped_defs = true
+ignore_missing_imports = true
+plugins = ["pandera.mypy", "pydantic.mypy"]
+
+[tool.pytest.ini_options]
+addopts = "--verbosity=2"
+pythonpath = ["src"]
+
+[tool.ruff]
+fix = true
+indent-width = 4
+line-length = 100
+target-version = "py{{ cookiecutter.python_version.replace('.', '') }}"
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = ["D100", "D103"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
