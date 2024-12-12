@@ -1,60 +1,70 @@
-[tool.poetry]
+[project]
 name = "{{ cookiecutter.package_name }}"
 version = "{{ cookiecutter.version }}"
 description = "{{ cookiecutter.project_description }}"
-repository = "{{ cookiecutter.repository_url }}"
-documentation = "{{ cookiecutter.documentation_url }}"
 authors = ["{{ cookiecutter.author_name }} <{{ cookiecutter.author_email }}>"]
 readme = "README.md"
+requires-python = "^{{ cookiecutter.python_version }}"
 license = "{{ cookiecutter.open_source_license }}"
 keywords = [{% for keyword in cookiecutter.keywords.split(',') %}"{{ keyword.strip() }}", {% endfor %}]
 packages = [{ include = "{{ cookiecutter.package_name }}", from = "src" }]
+dependencies = [
+    "loguru>=0.7.2",
+    "matplotlib>=3.9.0",
+    "mlflow>=2.14.3",
+    "numpy>=2.0.2",
+    "omegaconf>=2.3.0",
+    "pandera>=0.20.1",
+    "plotly>=5.22.0",
+    "plyer>=2.1.0",
+    "psutil>=6.0.0",
+    "pyarrow>=15.0.2",
+    "pydantic>=2.7.4",
+    "pydantic-settings>=2.3.4",
+    "pynvml>=11.5.0",
+    "setuptools>=71.1.0",
+]
 
-[tool.poetry.scripts]
-{{ cookiecutter.package_name }} = '{{ cookiecutter.package_name }}.scripts:main'
+[project.urls]
+repository = "{{ cookiecutter.repository_url }}"
+documentation = "{{ cookiecutter.documentation_url }}"
 
-[tool.poetry.dependencies]
-python = "^{{ cookiecutter.python_version }}"
-loguru = "^0.7.2"
-numpy = "^1.26.4"
-pandas = "^2.2.1"
-pyarrow = "^15.0.1"
-pydantic = "^2.6.4"
-pydantic-settings = "^2.2.1"
+[project.scripts]
+{{ cookiecutter.package_name }} = "{{ cookiecutter.package_name }}.scripts:main"
 
-[tool.poetry.group.checks.dependencies]
-bandit = "^1.7.8"
-coverage = "^7.4.3"
-mypy = "^1.9.0"
-pytest = "^8.1.1"
-pytest-cov = "^4.1.0"
-pytest-xdist = "^3.5.0"
-pandera = { extras = ["mypy"], version = "^0.18.3" }
-ruff = "^0.3.3"
-
-[tool.poetry.group.commits.dependencies]
-commitizen = "^3.18.3"
-pre-commit = "^3.6.2"
-
-[tool.poetry.group.dev.dependencies]
-invoke = "^2.2.0"
-
-[tool.poetry.group.docs.dependencies]
-pdoc = "^14.4.0"
-
-[tool.poetry.group.notebooks.dependencies]
-ipykernel = "^6.29.3"
-nbformat = "^5.10.2"
-
-[tool.bandit]
-targets = ["src"]
+[project.optional-dependencies]
+checks = [
+    "bandit>=1.7.9",
+    "coverage>=7.5.4",
+    "mypy>=1.10.1",
+    "pytest>=8.2.2",
+    "pytest-cov>=5.0.0",
+    "pytest-xdist>=3.6.1",
+    "pandera[mypy]>=0.20.1",
+    "ruff>=0.5.0",
+    "pytest-mock>=3.14.0",
+]
+commits = [
+    "commitizen>=3.27.0",
+    "pre-commit>=3.7.1",
+]
+dev = [
+    "invoke>=2.2.0",
+]
+docs = [
+    "pdoc>=14.5.1",
+]
+notebooks = [
+    "ipykernel>=6.29.4",
+    "nbformat>=5.10.4",
+]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
 tag_format = "v$version"
 version_scheme = "pep440"
-version_provider = "poetry"
-changelog_start_rev = "v{{ cookiecutter.version }}"
+version_provider = "uv"
+changelog_start_rev = "v1.0.0"
 update_changelog_on_bump = true
 
 [tool.coverage.run]
@@ -76,9 +86,9 @@ pythonpath = ["src"]
 
 [tool.ruff]
 fix = true
-indent-width = 4
-line-length = 100
-target-version = "py{{ cookiecutter.python_version.replace('.', '') }}"
+indent_width = 4
+line_length = 100
+target_version = "py{{ cookiecutter.python_version.replace('.', '') }}"
 
 [tool.ruff.format]
 docstring-code-format = true
@@ -90,5 +100,5 @@ convention = "google"
 "tests/*.py" = ["D100", "D103"]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv"]
+build-backend = "uv"
