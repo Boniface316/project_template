@@ -5,7 +5,7 @@ description = "{{ cookiecutter.project_description }}"
 authors = ["{{ cookiecutter.author_name }} <{{ cookiecutter.author_email }}>"]
 readme = "README.md"
 requires-python = "^{{ cookiecutter.python_version }}"
-license = "{{ cookiecutter.open_source_license }}"
+license = {text = "{{ cookiecutter.open_source_license }}"}
 keywords = [{% for keyword in cookiecutter.keywords.split(',') %}"{{ keyword.strip() }}", {% endfor %}]
 packages = [{ include = "{{ cookiecutter.package_name }}", from = "src" }]
 dependencies = [
