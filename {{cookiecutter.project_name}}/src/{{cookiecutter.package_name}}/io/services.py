@@ -98,7 +98,7 @@ class AlertsService(Service):
     """
 
     enable: bool = True
-    app_name: str = "Bikes"
+    app_name: str = "{{cookiecutter.package_name}}"
     timeout: int | None = None
 
     @T.override
@@ -114,7 +114,10 @@ class AlertsService(Service):
         """
         if self.enable:
             notification.notify(
-                title=title, message=message, app_name=self.app_name, timeout=self.timeout
+                title=title,
+                message=message,
+                app_name=self.app_name,
+                timeout=self.timeout,
             )
         else:
             print(f"[{self.app_name}] {title}: {message}")
@@ -157,9 +160,9 @@ class MlflowService(Service):
     tracking_uri: str = "./mlruns"
     registry_uri: str = "./mlruns"
     # experiment
-    experiment_name: str = "bikes"
+    experiment_name: str = "{{cookiecutter.package_name}}"
     # registry
-    registry_name: str = "bikes"
+    registry_name: str = "{{cookiecutter.package_name}}"
     # autolog
     autolog_disable: bool = False
     autolog_disable_for_unsupported_versions: bool = False
@@ -189,7 +192,9 @@ class MlflowService(Service):
         )
 
     @ctx.contextmanager
-    def run_context(self, run_config: RunConfig) -> T.Generator[mlflow.ActiveRun, None, None]:
+    def run_context(
+        self, run_config: RunConfig
+    ) -> T.Generator[mlflow.ActiveRun, None, None]:
         """Yield an active Mlflow run and exit it afterwards.
 
         Args:
@@ -212,4 +217,6 @@ class MlflowService(Service):
         Returns:
             MlflowClient: the mlflow client.
         """
-        return mt.MlflowClient(tracking_uri=self.tracking_uri, registry_uri=self.registry_uri)
+        return mt.MlflowClient(
+            tracking_uri=self.tracking_uri, registry_uri=self.registry_uri
+        )

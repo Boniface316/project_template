@@ -2,7 +2,7 @@
 
 # %% IMPORTS
 
-from bikes import scripts
+from {{cookiecutter.package_name}} import scripts
 
 # %% MAIN
 

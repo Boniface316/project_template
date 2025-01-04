@@ -8,10 +8,10 @@ import mlflow
 import pandas as pd
 import pydantic as pdt
 
-from bikes.core import metrics as metrics_
-from bikes.core import schemas
-from bikes.io import datasets, registries, services
-from bikes.jobs import base
+from ..core import metrics as metrics_
+from ..core import schemas
+from ..io import datasets, registries, services
+from ..jobs import base
 
 # %% JOBS
 
@@ -43,7 +43,9 @@ class EvaluationsJob(base.Job):
     model_type: str = "regressor"
     alias_or_version: str | int = "Champion"
     # Metrics
-    metrics: list[metrics_.MetricKind] = pdt.Field([metrics_.SklearnMetric()], discriminator="KIND")
+    metrics: list[metrics_.MetricKind] = pdt.Field(
+        [metrics_.SklearnMetric()], discriminator="KIND"
+    )
     # Evaluators
     evaluators: list[str] = ["default"]
     # Thresholds
@@ -98,7 +100,8 @@ class EvaluationsJob(base.Job):
             # model
             logger.info("With model: {}", self.mlflow_service.registry_name)
             model_uri = registries.uri_for_model_alias_or_version(
-                name=self.mlflow_service.registry_name, alias_or_version=self.alias_or_version
+                name=self.mlflow_service.registry_name,
+                alias_or_version=self.alias_or_version,
             )
             logger.debug("- Model URI: {}", model_uri)
             # metrics
@@ -108,7 +111,8 @@ class EvaluationsJob(base.Job):
             # thresholds
             logger.info("Convert thresholds: {}", self.thresholds)
             validation_thresholds = {
-                name: threshold.to_mlflow() for name, threshold in self.thresholds.items()
+                name: threshold.to_mlflow()
+                for name, threshold in self.thresholds.items()
             }
             logger.debug("- Validation thresholds: {}", validation_thresholds)
             # evaluations
