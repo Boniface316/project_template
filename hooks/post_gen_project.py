@@ -4,11 +4,10 @@ import sys
 
 
 def run_command(command):
-    try:
-        subprocess.run(command, check=True, shell=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Error executing command '{command}': {e}")
-        sys.exit(1)
+    result = subprocess.run(
+        command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
+    return result.stdout.decode().strip()
 
 
 def get_github_username():
@@ -81,29 +80,27 @@ def create_and_push_github_repo():
 
 
 def create_additional_repos(project_name, github_username):
+    def add_submodule(repo_name, path):
+        if not os.path.exists(path):
+            run_command(f"gh repo create {repo_name} --public")
+            run_command(
+                f"git submodule add https://github.com/{github_username}/{repo_name}.git {path}"
+            )
+            os.chdir(path)
+            run_command("git add .")
+            run_command('git commit -m "Initial commit"')
+            run_command("git push -u origin main")
+            os.chdir("..")
+        else:
+            print(f"Submodule {path} already exists, skipping creation.")
+
     # Create notes repo and add as submodule
     notes_repo = f"{project_name}_notes"
-    run_command(f"gh repo create {notes_repo} --public")
-    run_command(
-        f"git submodule add https://github.com/{github_username}/{notes_repo}.git notes"
-    )
-    os.chdir("notes")
-    run_command("git add .")
-    run_command('git commit -m "Initial commit for notes"')
-    run_command("git push -u origin main")
-    os.chdir("..")
+    add_submodule(notes_repo, "notes")
 
     # Create benchmark repo and add as submodule
     benchmark_repo = f"{project_name}_benchmark"
-    run_command(f"gh repo create {benchmark_repo} --public")
-    run_command(
-        f"git submodule add https://github.com/{github_username}/{benchmark_repo}.git benchmark"
-    )
-    os.chdir("benchmark")
-    run_command("git add .")
-    run_command('git commit -m "Initial commit for benchmark"')
-    run_command("git push -u origin main")
-    os.chdir("..")
+    add_submodule(benchmark_repo, "benchmark")
 
     # Commit the submodules in the main repository
     run_command("git add .gitmodules notes benchmark")
