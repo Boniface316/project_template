@@ -77,3 +77,4 @@ def create_and_push_github_repo():
 
 if __name__ == "__main__":
     create_and_push_github_repo()
+    subprocess.run(["gtasks setup.labels"], shell=True)
