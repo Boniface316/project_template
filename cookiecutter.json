@@ -16,5 +16,7 @@
         "BSD-3-Clause"
     ],
     "keywords": "keyword1, keyword2, keyword3",
-    "python_version": "3.9"
+    "python_version": "3.9",
+    "create_seperate_repo_for_notes": true,
+    "create_seperate_repo_for_benchmarks": true,
 }

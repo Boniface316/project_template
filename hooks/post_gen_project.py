@@ -1,5 +1,6 @@
 import subprocess
 import sys
+import os
 
 
 def run_command(command):
@@ -85,6 +86,10 @@ def create_additional_repos(project_name, github_username):
             run_command(
                 f"git submodule add https://github.com/{github_username}/{repo_name}.git {path}"
             )
+            run_command(f"git add .gitmodules {path}")
+            run_command(f'git commit -m "Add {path} submodules"')
+            run_command("git push")
+            print(f"Successfully created and added {path} as submodule.")
 
         except subprocess.CalledProcessError as e:
             if "already exists in the index" in e.stderr.decode():
@@ -93,17 +98,18 @@ def create_additional_repos(project_name, github_username):
                 raise
 
     # Create notes repo and add as submodule
-    notes_repo = f"{project_name}_notes"
-    add_submodule(notes_repo, "notes")
+    if "{{ cookiecutter.create_seperate_repo_for_notes }}":
+        notes_repo = f"{project_name}_notes"
+        add_submodule(notes_repo, "notes")
+    else:
+        os.mkdir("notes")
 
-    # Create benchmark repo and add as submodule
-    benchmark_repo = f"{project_name}_benchmark"
-    add_submodule(benchmark_repo, "benchmark")
-
-    # Commit the submodules in the main repository
-    run_command("git add .gitmodules notes benchmark")
-    run_command('git commit -m "Add notes and benchmark submodules"')
-    run_command("git push")
+    if "{{ cookiecutter.create_seperate_repo_for_benchmark }}":
+        # Create benchmark repo and add as submodule
+        benchmark_repo = f"{project_name}_benchmark"
+        add_submodule(benchmark_repo, "benchmark")
+    else:
+        os.mkdir("benchmark")
 
     print("Additional repositories created and added as submodules successfully.")
 
