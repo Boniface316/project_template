@@ -91,11 +91,11 @@ def create_additional_repos(project_name, github_username):
             run_command("git add .")
             run_command('git commit -m "Initial commit"')
             run_command("git push -u origin main")
+            os.chdir("..")
             run_command(
                 f"git submodule add https://github.com/{github_username}/{repo_name}.git {path}"
             )
 
-            os.chdir("..")
         except subprocess.CalledProcessError as e:
             if "already exists in the index" in e.stderr.decode():
                 print(f"Submodule {path} already exists, skipping creation.")
