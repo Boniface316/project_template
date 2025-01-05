@@ -82,6 +82,9 @@ def create_and_push_github_repo():
 def create_additional_repos(project_name, github_username):
     def add_submodule(repo_name, path):
         try:
+            print(f"Creating and adding submodule: {repo_name}")
+            print(f"Path: {path}")
+            os.mkdir(path)
             run_command(f"gh repo create {repo_name} --public")
             run_command(
                 f"git submodule add https://github.com/{github_username}/{repo_name}.git {path}"
