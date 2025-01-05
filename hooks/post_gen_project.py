@@ -84,7 +84,7 @@ def create_additional_repos(project_name, github_username):
     # Create notes repo and folder
     notes_repo = f"{project_name}_notes"
     run_command(f"gh repo create {notes_repo} --public")
-    os.mkdir("notes")
+    # os.mkdir("notes")
     os.chdir("notes")
     run_command("git init")
     run_command(
