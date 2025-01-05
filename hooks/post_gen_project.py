@@ -28,27 +28,20 @@ def create_and_push_github_repo():
     repo_name = f"{organization}/{project_name}" if organization else project_name
 
     try:
+        # Initialize local Git repository
+        run_command("git init")
+        run_command("git add .")
+        run_command('git commit -m "Initial commit"')
+
         # Create GitHub repository
         subprocess.run(
-            ["gh", "repo", "create", repo_name, f"--{visibility}", "--source=."],
-            check=True,
+            ["gh", "repo", "create", repo_name, f"--{visibility}"], check=True
         )
         print(f"Successfully created GitHub repository: {repo_name}")
 
-        # Initialize local Git repository
-        run_command("git init")
-
-        # Add all files
-        run_command("git add .")
-
-        # Commit files
-        run_command('git commit -m "Initial commit"')
-
-        # Add remote
+        # Add remote and push
         remote_url = f"https://github.com/{repo_name}.git"
         run_command(f"git remote add origin {remote_url}")
-
-        # Push to GitHub
         run_command("git push -u origin main")
 
         print(f"Successfully pushed local files to GitHub repository: {repo_name}")
