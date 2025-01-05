@@ -1,7 +1,7 @@
 {
     "project_name": "my_project",
     "package_name": "my_package",
-    "year": "{{ cookiecutter._year }}",
+    "year": "2025",
     "version": "0.1.0",
     "Dockerfile": true,
     "project_description": "A short description of the project",
