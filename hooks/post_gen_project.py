@@ -10,6 +10,20 @@ def run_command(command):
         sys.exit(1)
 
 
+def get_github_username():
+    try:
+        result = subprocess.run(
+            ["gh", "api", "user", "-q", ".login"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        return result.stdout.strip()
+    except subprocess.CalledProcessError as e:
+        print(f"Error getting GitHub username: {e}")
+        return None
+
+
 def create_and_push_github_repo():
     project_name = "{{ cookiecutter.project_name }}"
     organization = input(
@@ -25,7 +39,18 @@ def create_and_push_github_repo():
         print("Invalid visibility option. Defaulting to public.")
         visibility = "public"
 
-    repo_name = f"{organization}/{project_name}" if organization else project_name
+    github_username = get_github_username()
+    if not github_username:
+        print(
+            "Failed to retrieve GitHub username. Make sure you're authenticated with gh CLI."
+        )
+        sys.exit(1)
+
+    repo_name = (
+        f"{organization}/{project_name}"
+        if organization
+        else f"{github_username}/{project_name}"
+    )
 
     try:
         # Initialize local Git repository
