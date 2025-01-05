@@ -1,3 +1,4 @@
+import os
 import subprocess
 import sys
 
@@ -70,11 +71,50 @@ def create_and_push_github_repo():
         run_command("git push -u origin main")
 
         print(f"Successfully pushed local files to GitHub repository: {repo_name}")
+
+        # Create additional repositories
+        create_additional_repos(project_name, github_username)
+
     except subprocess.CalledProcessError as e:
         print(f"Error during repository creation or push: {e}")
         sys.exit(1)
 
 
+def create_additional_repos(project_name, github_username):
+    # Create notes repo and folder
+    notes_repo = f"{project_name}_notes"
+    run_command(f"gh repo create {notes_repo} --public")
+    os.mkdir("notes")
+    os.chdir("notes")
+    run_command("git init")
+    run_command(
+        f"git remote add origin https://github.com/{github_username}/{notes_repo}.git"
+    )
+    run_command("git add .")
+    run_command('git commit -m "Initial commit for notes"')
+    run_command("git push -u origin main")
+    os.chdir("..")
+
+    # Create benchmark repo and folder
+    benchmark_repo = f"{project_name}_benchmark"
+    run_command(f"gh repo create {benchmark_repo} --public")
+    os.mkdir("benchmark")
+    os.chdir("benchmark")
+    run_command("git init")
+    run_command(
+        f"git remote add origin https://github.com/{github_username}/{benchmark_repo}.git"
+    )
+    run_command("git add .")
+    run_command('git commit -m "Initial commit for benchmark"')
+    run_command("git push -u origin main")
+    os.chdir("..")
+
+    # Add notes and benchmark folders to .gitignore
+    with open(".gitignore", "a") as gitignore:
+        gitignore.write("\n# Additional folders\nnotes/\nbenchmark/\n")
+
+    print("Additional repositories and folders created successfully.")
+
+
 if __name__ == "__main__":
     create_and_push_github_repo()
-    subprocess.run(["gtasks setup.labels"], shell=True)
