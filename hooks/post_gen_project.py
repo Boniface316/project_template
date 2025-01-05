@@ -81,7 +81,7 @@ def create_and_push_github_repo():
 
 def create_additional_repos(project_name, github_username):
     def add_submodule(repo_name, path):
-        if not os.path.exists(path):
+        try:
             run_command(f"gh repo create {repo_name} --public")
             run_command(
                 f"git submodule add https://github.com/{github_username}/{repo_name}.git {path}"
@@ -91,8 +91,11 @@ def create_additional_repos(project_name, github_username):
             run_command('git commit -m "Initial commit"')
             run_command("git push -u origin main")
             os.chdir("..")
-        else:
-            print(f"Submodule {path} already exists, skipping creation.")
+        except subprocess.CalledProcessError as e:
+            if "already exists in the index" in e.stderr.decode():
+                print(f"Submodule {path} already exists, skipping creation.")
+            else:
+                raise
 
     # Create notes repo and add as submodule
     notes_repo = f"{project_name}_notes"
