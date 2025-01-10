@@ -106,10 +106,10 @@ def create_additional_repos(project_name, github_username):
 
     if "{{ cookiecutter.create_seperate_repo_for_benchmarks }}":
         # Create benchmark repo and add as submodule
-        benchmark_repo = f"{project_name}_benchmark"
-        add_submodule(benchmark_repo, "benchmark")
+        benchmark_repo = f"{project_name}_benchmarks"
+        add_submodule(benchmark_repo, "benchmarks")
     else:
-        os.mkdir("benchmark")
+        os.mkdir("benchmarks")
 
     print("Additional repositories created and added as submodules successfully.")
 

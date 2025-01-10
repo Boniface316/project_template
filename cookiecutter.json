@@ -17,6 +17,8 @@
     ],
     "keywords": "keyword1, keyword2, keyword3",
     "python_version": "3.9",
+    "tracking_uri": "./mlruns",
+    "registry_uri": "./mlruns",
     "create_seperate_repo_for_notes": true,
     "create_seperate_repo_for_benchmarks": true
 }

@@ -1,129 +1,16 @@
-"""Manage global context during execution."""
-
-# %% IMPORTS
+from .base import Service
 
 from __future__ import annotations
 
-import abc
 import contextlib as ctx
-import sys
 import typing as T
 
-import loguru
 import mlflow
 import mlflow.tracking as mt
 import pydantic as pdt
-from plyer import notification
-
-# %% SERVICES
 
 
-class Service(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid"):
-    """Base class for a global service.
-
-    Use services to manage global contexts.
-    e.g., logger object, mlflow client, spark context, ...
-    """
-
-    @abc.abstractmethod
-    def start(self) -> None:
-        """Start the service."""
-
-    def stop(self) -> None:
-        """Stop the service."""
-        # does nothing by default
-
-
-class LoggerService(Service):
-    """Service for logging messages.
-
-    https://loguru.readthedocs.io/en/stable/api/logger.html
-
-    Parameters:
-        sink (str): logging output.
-        level (str): logging level.
-        format (str): logging format.
-        colorize (bool): colorize output.
-        serialize (bool): convert to JSON.
-        backtrace (bool): enable exception trace.
-        diagnose (bool): enable variable display.
-        catch (bool): catch errors during log handling.
-    """
-
-    sink: str = "stderr"
-    level: str = "DEBUG"
-    format: str = (
-        "<green>[{time:YYYY-MM-DD HH:mm:ss.SSS}]</green>"
-        "<level>[{level}]</level>"
-        "<cyan>[{name}:{function}:{line}]</cyan>"
-        " <level>{message}</level>"
-    )
-    colorize: bool = True
-    serialize: bool = False
-    backtrace: bool = True
-    diagnose: bool = False
-    catch: bool = True
-
-    @T.override
-    def start(self) -> None:
-        loguru.logger.remove()
-        config = self.model_dump()
-        # use standard sinks or keep the original
-        sinks = {"stderr": sys.stderr, "stdout": sys.stdout}
-        config["sink"] = sinks.get(config["sink"], config["sink"])
-        loguru.logger.add(**config)
-
-    def logger(self) -> loguru.Logger:
-        """Return the main logger.
-
-        Returns:
-            loguru.Logger: the main logger.
-        """
-        return loguru.logger
-
-
-class AlertsService(Service):
-    """Service for sending notifications.
-
-    Require libnotify-bin on Linux systems.
-
-    In production, use with Slack, Discord, or emails.
-
-    https://plyer.readthedocs.io/en/latest/api.html#plyer.facades.Notification
-
-    Parameters:
-        enable (bool): use notifications or print.
-        app_name (str): name of the application.
-        timeout (int | None): timeout in secs.
-    """
-
-    enable: bool = True
-    app_name: str = "{{cookiecutter.package_name}}"
-    timeout: int | None = None
-
-    @T.override
-    def start(self) -> None:
-        pass
-
-    def notify(self, title: str, message: str) -> None:
-        """Send a notification to the system.
-
-        Args:
-            title (str): title of the notification.
-            message (str): message of the notification.
-        """
-        if self.enable:
-            notification.notify(
-                title=title,
-                message=message,
-                app_name=self.app_name,
-                timeout=self.timeout,
-            )
-        else:
-            print(f"[{self.app_name}] {title}: {message}")
-
-
-class MlflowService(Service):
+class MLflowService(Service):
     """Service for Mlflow tracking and registry.
 
     Parameters:
@@ -157,12 +44,12 @@ class MlflowService(Service):
         log_system_metrics: bool | None = True
 
     # server uri
-    tracking_uri: str = "./mlruns"
-    registry_uri: str = "./mlruns"
+    tracking_uri: str = "{{cookiecutter.tracking_uri}}"
+    registry_uri: str = "{{cookiecutter.registry_uri}}"
     # experiment
-    experiment_name: str = "{{cookiecutter.package_name}}"
+    experiment_name: str = "{{cookiecutter.project_name}}"
     # registry
-    registry_name: str = "{{cookiecutter.package_name}}"
+    registry_name: str = "{{cookiecutter.project_name}}"
     # autolog
     autolog_disable: bool = False
     autolog_disable_for_unsupported_versions: bool = False
@@ -201,7 +88,7 @@ class MlflowService(Service):
             run (str): run parameters.
 
         Yields:
-            T.Generator[mlflow.ActiveRun, None, None]: active run context. Will be closed as the end of context.
+            T.Generator[mlflow.ActiveRun, None, None]: active run context. Will be closed at the end of context.
         """
         with mlflow.start_run(
             run_name=run_config.name,

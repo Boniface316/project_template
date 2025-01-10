@@ -2,9 +2,12 @@
 name = "{{ cookiecutter.package_name }}"
 version = "{{ cookiecutter.version }}"
 description = "{{ cookiecutter.project_description }}"
-authors = ["{{ cookiecutter.author_name }} <{{ cookiecutter.author_email }}>"]
+authors = [
+authors = [
+    {name = "{{cookiecutter.author}}", email = "{{cookiecutter.email}}",
+]
 readme = "README.md"
-requires-python = "^{{ cookiecutter.python_version }}"
+requires-python = ">={{ cookiecutter.python_version }}"
 license = {text = "{{ cookiecutter.open_source_license }}"}
 keywords = [{% for keyword in cookiecutter.keywords.split(',') %}"{{ keyword.strip() }}", {% endfor %}]
 dependencies = [
