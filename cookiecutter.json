@@ -1,5 +1,5 @@
 {
-    "user": "fmind",
+    "user": "boniface316",
     "name": "MLOps Project",
     "repository": "{{cookiecutter.name.lower().replace(' ', '-')}}",
     "package": "{{cookiecutter.repository.replace('-', '_')}}",
