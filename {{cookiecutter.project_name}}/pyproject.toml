@@ -6,7 +6,7 @@
 [project]
 name = "{{cookiecutter.project_name}}"
 version = "{{cookiecutter.version}}"
-project_description = "{{cookiecutter.description}}"
+project_description = "{{cookiecutter.project_description}}"
 authors = [{ name = "{{cookiecutter.author_name}}" }]
 readme = "README.md"
 requires-python = ">={{cookiecutter.python_version}}"
