@@ -4,10 +4,10 @@
 # PROJECT
 
 [project]
-name = "{{cookiecutter.project_name}}"
+name = "{{cookiecutter.repository}}"
 version = "{{cookiecutter.version}}"
-project_description = "{{cookiecutter.project_description}}"
-authors = [{ name = "{{cookiecutter.author_name}}" }]
+description = "{{cookiecutter.description}}"
+authors = [{ name = "{{cookiecutter.user}}" }]
 readme = "README.md"
 requires-python = ">={{cookiecutter.python_version}}"
 dependencies = [
