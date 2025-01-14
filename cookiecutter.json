@@ -9,6 +9,7 @@
     "documentation_url": "https://username.github.io/repository",
     "author_name": "Your Name",
     "author_email": "your.email@example.com",
+    "mlflow_version": "2.19.0",
     "open_source_license": [
         "MIT",
         "Apache-2.0",
@@ -16,7 +17,7 @@
         "BSD-3-Clause"
     ],
     "keywords": "keyword1, keyword2, keyword3",
-    "python_version": "3.9",
+    "python_version": "3.12",
     "tracking_uri": "./mlruns",
     "registry_uri": "./mlruns",
     "create_seperate_repo_for_notes": true,
