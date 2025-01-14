@@ -25,7 +25,7 @@ def get_github_username():
 
 
 def create_and_push_github_repo():
-    project_name = "{{ cookiecutter.project_name }}"
+    project_name = "{{ cookiecutter.name }}"
     organization = input(
         "Enter the GitHub organization name (leave blank for personal account): "
     ).strip()
