@@ -46,8 +46,8 @@ class Model(abc.ABC, pdt.BaseModel, strict=True, frozen=False, extra="forbid"):
         for key, value in params.items():
             setattr(self, key, value)
         return self
-    
-        @abc.abstractmethod
+
+    @abc.abstractmethod
     def fit(self, inputs: schemas.Inputs, targets: schemas.Targets) -> T.Self:
         """Fit the model on the given inputs and targets.
 
@@ -96,3 +96,10 @@ class Model(abc.ABC, pdt.BaseModel, strict=True, frozen=False, extra="forbid"):
             T.Any: any internal model (either empty or fitted).
         """
         raise NotImplementedError()
+
+
+class Model_(Model):
+    pass
+
+
+ModelKind = Model_

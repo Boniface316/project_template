@@ -48,3 +48,6 @@ class Reader(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid"):
         Returns:
             Lineage: lineage information.
         """
+
+
+ReaderKind = None

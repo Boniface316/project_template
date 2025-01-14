@@ -3,8 +3,13 @@ import typing as T
 
 from ..services import MLflowService
 from ..io.csv import ReaderKind
-
+from ..core.models import ModelKind, Model_
+from ..core.metrics import MetricsKind, Metric_
 import pydantic as pdt
+from ..utils.splitters import SplitterKind, TrainTestSplitter
+from ..registeries.savers import SaverKind, CustomSaver
+from ..utils.signers import SignerKind, InferSigner
+from ..registeries.registries import RegisterKind, MlflowRegister
 
 
 class TrainingJob(Job):
@@ -17,9 +22,9 @@ class TrainingJob(Job):
         model (models.ModelKind): machine learning model to train.
         metrics (metrics_.MetricsKind): metric list to compute.
         splitter (splitters.SplitterKind): data sets splitter.
-        saver (registries.SaverKind): model saver.
+        saver (SaverKind): model saver.
         signer (signers.SignerKind): model signer.
-        registry (registries.RegisterKind): model register.
+        registry (RegisterKind): model register.
     """
 
     KIND: T.Literal["TrainingJob"] = "TrainingJob"
@@ -30,4 +35,14 @@ class TrainingJob(Job):
     inputs: ReaderKind = pdt.Field(..., discriminator="KINDS")
     targets: ReaderKind = pdt.Field(..., discriminator="KINDS")
     # Model
-    models: ModelKind = pdt.Field(BaselineSklearnModel(), discriminator="KINDS")
+    models: ModelKind = pdt.Field(Model_(), discriminator="KINDS")
+    # Metrics
+    metrics: MetricsKind = [Metric_()]
+    # Splitter
+    splitter: SplitterKind = pdt.Field(TrainTestSplitter(), discriminator="KIND")
+    # Saver
+    saver: SaverKind = pdt.Field(CustomSaver(), discriminator="KIND")
+    # Signer
+    signer: SignerKind = pdt.Field(InferSigner(), discriminator="KIND")
+    # Register
+    registry: RegisterKind = pdt.Field(MlflowRegister(), discriminator="KIND")
