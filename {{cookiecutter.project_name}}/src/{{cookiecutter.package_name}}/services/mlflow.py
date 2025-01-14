@@ -47,9 +47,9 @@ class MLflowService(Service):
     tracking_uri: str = "{{cookiecutter.tracking_uri}}"
     registry_uri: str = "{{cookiecutter.registry_uri}}"
     # experiment
-    experiment_name: str = "{{cookiecutter.project_name}}"
+    experiment_name: str = "{{cookiecutter.name}}"
     # registry
-    registry_name: str = "{{cookiecutter.project_name}}"
+    registry_name: str = "{{cookiecutter.name}}"
     # autolog
     autolog_disable: bool = False
     autolog_disable_for_unsupported_versions: bool = False

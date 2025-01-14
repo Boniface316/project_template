@@ -26,7 +26,7 @@ class AlertsService(Service):
     """
 
     enable: bool = True
-    app_name: str = "{{cookiecutter.project_name}}"
+    app_name: str = "{{cookiecutter.name}}"
     timeout: int | None = None
 
     @T.override
