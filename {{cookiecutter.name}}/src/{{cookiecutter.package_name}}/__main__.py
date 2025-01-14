@@ -2,7 +2,7 @@
 
 # %% IMPORTS
 
-from {{cookiecutter.package_name}} import scripts
+from {{cookiecutter.package}} import scripts
 
 # %% MAIN
 
