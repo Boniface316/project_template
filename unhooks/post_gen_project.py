@@ -1,6 +1,5 @@
 import subprocess
 import sys
-import os
 
 
 def run_command(command):
@@ -72,7 +71,7 @@ def create_and_push_github_repo():
         print(f"Successfully pushed local files to GitHub repository: {repo_name}")
 
         # Create additional repositories
-        create_additional_repos(project_name, github_username)
+        # create_additional_repos(project_name, github_username)
 
     except subprocess.CalledProcessError as e:
         print(f"Error during repository creation or push: {e}")
@@ -98,21 +97,22 @@ def create_additional_repos(project_name, github_username):
                 raise
 
     # Create notes repo and add as submodule
-    if "{{ cookiecutter.create_seperate_repo_for_notes }}":
-        notes_repo = f"{project_name}_notes"
-        add_submodule(notes_repo, "notes")
-    else:
-        os.mkdir("notes")
+    # if "create_seperate_repo_for_notes
+    #      notes_repo = f"{project_name}_notes"
+    #     add_submodule(notes_repo, "notes")
+    # else:
+    #     os.mkdir("notes")
 
-    if "{{ cookiecutter.create_seperate_repo_for_benchmarks }}":
-        # Create benchmark repo and add as submodule
-        benchmark_repo = f"{project_name}_benchmarks"
-        add_submodule(benchmark_repo, "benchmarks")
-    else:
-        os.mkdir("benchmarks")
+    # if "create_seperate_repo_for_benchm":
+    #     # Create benchmark repo and add as submodule
+    #     benchmark_repo = f"{project_name}_benchmarks"
+    #     add_submodule(benchmark_repo, "benchmarks")
+    # else:
+    #     os.mkdir("benchmarks")
 
     print("Additional repositories created and added as submodules successfully.")
 
 
 if __name__ == "__main__":
-    create_and_push_github_repo()
+    print("Creating and pushing GitHub repository...")
+    # create_and_push_github_repo()

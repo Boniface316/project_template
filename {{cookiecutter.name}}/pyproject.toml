@@ -12,8 +12,12 @@ readme = "README.md"
 requires-python = ">={{cookiecutter.python_version}}"
 dependencies = [
     "mlflow>={{cookiecutter.mlflow_version}}",
+    "pydantic-settings>=2.7.1",
+    "pydantic>=2.10.5",
+    "pandera>=0.22.1",
+    "omegaconf>=2.3.0",
 ]
-license = { file = "LICENSE.txt" }
+license = { file = "LICENSE" }
 keywords = ["mlops", "python", "package"]
 
 # LINKS
@@ -32,6 +36,7 @@ Changelog = "https://github.com/{{cookiecutter.user}}/{{cookiecutter.repository}
 
 # DEPENDENCIES
 
+[dependency-groups]
 [dependency-groups]
 checks = [
     "bandit>=1.8.0",

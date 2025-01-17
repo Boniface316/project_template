@@ -1,9 +1,29 @@
-from .base import Service
+from __future__ import annotations
 
 import sys
 import typing as T
 
 import loguru
+
+import pydantic as pdt
+import abc
+import time
+
+
+class Service(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid"):
+    """Base class for a global service.
+
+    Use services to manage global contexts.
+    e.g., logger object, mlflow client, spark context, ...
+    """
+
+    @abc.abstractmethod
+    def start(self) -> None:
+        """Start the service."""
+
+    def stop(self) -> None:
+        """Stop the service."""
+        # does nothing by default
 
 
 class LoggerService(Service):
@@ -52,3 +72,20 @@ class LoggerService(Service):
             loguru.Logger: the main logger.
         """
         return loguru.logger
+
+
+logger_service = LoggerService()
+
+logger = logger_service.logger()
+logger.add("file.log")
+logger.opt(colors=True).info("<red>With logger: {}</red>", logger)
+logger.info("Starting")
+
+for i in range(1000):
+    logger.debug("This is a debug message")
+    logger.info("This is an info message")
+    logger.warning("This is a warning message")
+    logger.error("This is an error message")
+    logger.critical("This is a critical message")
+    logger.info("Iteration: {}", i)
+    time.sleep(30)

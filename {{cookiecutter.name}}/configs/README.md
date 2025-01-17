@@ -16,7 +16,11 @@ job:
 ```
 
 ## Mandatory fields
+Dictaed by each jobs. See the fields that needs to be filled. Schema will show the required fields.
 
 ### job
 #### KIND
 This has to be the kind of job you want to execute. The list of jobs are defined in 
+
+### Using extras
+uv run mlops-project configs/config.yaml --extras '{"job": {"running_msg": "from terminal"}}'

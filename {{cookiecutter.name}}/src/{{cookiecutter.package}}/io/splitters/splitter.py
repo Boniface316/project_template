@@ -8,8 +8,9 @@ import typing as T
 import numpy as np
 import numpy.typing as npt
 import pydantic as pdt
-from ..core.schemas import Inputs, Targets
 from sklearn import model_selection
+
+from ..schemas import Inputs, Targets
 
 # %% TYPES
 
@@ -17,18 +18,16 @@ Index = npt.NDArray[np.int64]
 TrainTestIndex = tuple[Index, Index]
 TrainTestSplits = T.Iterator[TrainTestIndex]
 
+# %% SPLITTERS
 
-# %%
+
 class Splitter(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid"):
-    """Base class for a data splitter.
+    """Base class for a splitter.
 
-    Use splitters to divide data into subsets.
-    e.g., train/valid/test, k-folds, ...
+    Use splitters to split data in sets.
+    e.g., split between a train/test subsets.
 
-    Parameters:
-        n_splits (int): number of splits.
-        shuffle (bool): shuffle the data before splitting.
-        random_state (int): random seed for reproducibility.
+    # https://scikit-learn.org/stable/glossary.html#term-CV-splitter
     """
 
     KIND: str
@@ -40,14 +39,15 @@ class Splitter(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid")
         targets: Targets,
         groups: Index | None = None,
     ) -> TrainTestSplits:
-        """Split the inputs and targets into train and test sets.
+        """Split a dataframe into subsets.
 
         Args:
-            X (schemas.Inputs): input features.
-            y (schemas.Targets): target values.
+            inputs (Inputs): model inputs.
+            targets (Targets): model targets.
+            groups (Index | None, optional): group labels.
 
         Returns:
-            TrainTestSplits: train and test indices.
+            TrainTestSplits: iterator over the dataframe train/test splits.
         """
 
     @abc.abstractmethod
@@ -80,8 +80,8 @@ class TrainTestSplitter(Splitter):
 
     KIND: T.Literal["TrainTestSplitter"] = "TrainTestSplitter"
 
-    shuffle: bool
-    test_size: int | float
+    shuffle: bool = False  # required (time sensitive)
+    test_size: int | float = 24 * 30 * 2  # 2 months
     random_state: int = 42
 
     @T.override
@@ -145,6 +145,3 @@ class TimeSeriesSplitter(Splitter):
         groups: Index | None = None,
     ) -> int:
         return self.n_splits
-
-
-SplitterKind = TrainTestSplitter | TimeSeriesSplitter

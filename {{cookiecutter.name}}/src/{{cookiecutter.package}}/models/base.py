@@ -1,14 +1,22 @@
-"""Define trainable machine learning models"""
+"""Define trainable machine learning models."""
+
+# %% IMPORTS
 
 import abc
 import typing as T
 
 import pydantic as pdt
 
+from ..io import schemas
 
+# %% TYPES
+
+# Model params
 ParamKey = str
 ParamValue = T.Any
 Params = dict[ParamKey, ParamValue]
+
+# %% MODELS
 
 
 class Model(abc.ABC, pdt.BaseModel, strict=True, frozen=False, extra="forbid"):
@@ -21,15 +29,13 @@ class Model(abc.ABC, pdt.BaseModel, strict=True, frozen=False, extra="forbid"):
     KIND: str
 
     def get_params(self, deep: bool = True) -> Params:
-        """Get parameters for this estimator.
+        """Get the model params.
 
         Args:
-            deep (bool, optional): If True, will return the parameters for this
-                estimator and contained subobjects that are estimators.
-                Defaults to True.
+            deep (bool, optional): ignored.
 
         Returns:
-            Params: Parameter names mapped to their values.
+            Params: internal model parameters.
         """
         params: Params = {}
         for key, value in self.model_dump().items():
@@ -96,10 +102,3 @@ class Model(abc.ABC, pdt.BaseModel, strict=True, frozen=False, extra="forbid"):
             T.Any: any internal model (either empty or fitted).
         """
         raise NotImplementedError()
-
-
-class Model_(Model):
-    pass
-
-
-ModelKind = Model_

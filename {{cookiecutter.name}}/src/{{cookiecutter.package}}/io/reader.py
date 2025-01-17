@@ -1,10 +1,19 @@
+"""Read/Write datasets from/to external sources/destinations."""
+
+# %% IMPORTS
+
 import abc
-import pydanctic as pdt
-import mlflow.data.pandas_dataset as lineage
 import typing as T
+
+import mlflow.data.pandas_dataset as lineage
 import pandas as pd
+import pydantic as pdt
+
+# %% TYPINGS
 
 Lineage: T.TypeAlias = lineage.PandasDataset
+
+# %% READERS
 
 
 class Reader(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid"):
@@ -48,6 +57,3 @@ class Reader(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid"):
         Returns:
             Lineage: lineage information.
         """
-
-
-ReaderKind = None

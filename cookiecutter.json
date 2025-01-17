@@ -21,6 +21,8 @@
         "version": "Project Version",
         "description": "Project Description",
         "python_version": "Python Version",
-        "mlflow_version": "MLflow Version"
+        "mlflow_version": "MLflow Version",
+        "tracking_uri": "MLflow Tracking URI",
+        "registry_uri": "MLflow Registry URI"
     }
 }

@@ -10,7 +10,7 @@ description = "Build and deploy Python packages and Docker images for MLOps proj
 authors = [{ name = "Boniface Yogendran"}]
 readme = "README.md"
 requires-python = ">=3.12"
-license = { file = "LICENSE.txt" }
+license = { file = "LICENSE" }
 
 # DEPENDENCIES
 

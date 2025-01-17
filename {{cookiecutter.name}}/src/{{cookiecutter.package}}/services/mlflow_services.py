@@ -1,4 +1,6 @@
-from .base import Service
+"""Manage global context during execution."""
+
+# %% IMPORTS
 
 from __future__ import annotations
 
@@ -8,9 +10,12 @@ import typing as T
 import mlflow
 import mlflow.tracking as mt
 import pydantic as pdt
+from .base import Service
+
+# %% SERVICES
 
 
-class MLflowService(Service):
+class MlflowService(Service):
     """Service for Mlflow tracking and registry.
 
     Parameters:
@@ -47,9 +52,9 @@ class MLflowService(Service):
     tracking_uri: str = "{{cookiecutter.tracking_uri}}"
     registry_uri: str = "{{cookiecutter.registry_uri}}"
     # experiment
-    experiment_name: str = "{{cookiecutter.name}}"
+    experiment_name: str = "{{cookiecutter.package}}"
     # registry
-    registry_name: str = "{{cookiecutter.name}}"
+    registry_name: str = "{{cookiecutter.package}}"
     # autolog
     autolog_disable: bool = False
     autolog_disable_for_unsupported_versions: bool = False
