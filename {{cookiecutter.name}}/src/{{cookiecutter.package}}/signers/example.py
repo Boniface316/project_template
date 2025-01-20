@@ -1,7 +1,7 @@
 import typing as T
 import mlflow
 
-from .base import Signer, Signature
+from ._base import Signer, Signature
 
 from ..io.schemas import Inputs, Outputs
 

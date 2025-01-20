@@ -1,5 +1,5 @@
 from .example import ExampleSigner
-from .base import Signature
+from ._base import Signature
 
 
 SignerKind = ExampleSigner

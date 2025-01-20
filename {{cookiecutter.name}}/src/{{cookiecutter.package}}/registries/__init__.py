@@ -1,6 +1,5 @@
-from .savers import CustomSaver, BuiltinSaver
-from .loader import CustomLoader, BuiltinLoader
-from .register import MlflowRegister
+
+from .example import CustomLoader, CustomSaver, MlflowRegister, BuiltinLoader, BuiltinSaver
 
 SaverKind = CustomSaver | BuiltinSaver
 LoaderKind = CustomLoader | BuiltinLoader

@@ -1,6 +1,13 @@
-from .splitter import Splitter, TrainTestSplitter, TimeSeriesSplitter, TrainTestSplits, Index, TrainTestIndex
-from .example import ExampleSplitter, ExampleCVSplitter
+from .._base import Splitter, TrainTestSplits, Index, TrainTestIndex
+from .example import ExampleSplitter
 
-SplitterKind = TrainTestSplitter | TimeSeriesSplitter | ExampleSplitter| ExampleCVSplitter
+SplitterKind =  ExampleSplitter
 
-__all__ = ["TrainTestSplitter", "TimeSeriesSplitter", "ExampleSplitter", "ExampleCVSplitter", "SplitterKind", "Splitter", "TrainTestSplits", "Index", "TrainTestIndex"]
+__all__ = [
+    "ExampleSplitter",
+    "SplitterKind",
+    "Splitter",
+    "TrainTestSplits",
+    "Index",
+    "TrainTestIndex"
+]

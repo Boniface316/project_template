@@ -2,7 +2,7 @@ import typing as T
 import numpy as np
 
 
-from .base import Searcher, CrossValidation, Results, Grid
+from ._base import Searcher, CrossValidation, Results, Grid
 from ..models import Model
 from ..metrics import Metric
 from ..io.schemas import Inputs, Targets

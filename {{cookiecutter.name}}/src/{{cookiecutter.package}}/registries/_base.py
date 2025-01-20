@@ -11,7 +11,7 @@ import pydantic as pdt
 from ..signers import Signature
 from ..io.schemas import Inputs, Outputs
 
-from ..models.base import Model
+from ..models import Model
 
 
 # %% TYPES

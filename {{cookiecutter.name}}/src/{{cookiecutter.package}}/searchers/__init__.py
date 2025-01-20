@@ -1,5 +1,5 @@
 from .example import ExampleSearcher
-from .base import Searcher
+from ._base import Searcher
 
 SearcherKind = ExampleSearcher
 

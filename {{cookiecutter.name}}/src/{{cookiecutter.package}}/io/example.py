@@ -1,8 +1,8 @@
 import os
 import typing as T
 import pandas as pd
-from .reader import Reader, Lineage, lineage
-from .writer import Writer
+from ._base import Reader, Lineage, lineage
+from ._base import Writer
 
 
 class ExampleReader(Reader):

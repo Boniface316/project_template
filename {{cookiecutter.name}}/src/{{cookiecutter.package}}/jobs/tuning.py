@@ -7,7 +7,7 @@ import typing as T
 import mlflow
 import pydantic as pdt
 
-from .base import Job, Locals
+from ._base import Job, Locals
 from ..services import MlflowService
 from ..io import ReaderKind
 from ..models import ModelKind, ExampleModel
@@ -64,6 +64,7 @@ class TuningJob(Job):
         logger = self.logger_service.logger()
         logger.info("With logger: {}", logger)
         with self.mlflow_service.run_context(run_config=self.run_config) as run:
+            self.log_system_info(logger, run.info.artifact_uri)
             logger.info("With run context: {}", run.info)
             # data
             # - inputs

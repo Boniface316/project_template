@@ -1,5 +1,5 @@
-from .example_model import ExampleModel
-from .base import Model, ParamKey, Params, ParamValue
+from .example import ExampleModel
+from ._base import Model, ParamKey, Params, ParamValue
 
 ModelKind = ExampleModel
 

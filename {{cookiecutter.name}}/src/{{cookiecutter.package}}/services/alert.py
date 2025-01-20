@@ -1,4 +1,4 @@
-from .base import Service
+from ._base import Service
 
 import typing as T
 import pync

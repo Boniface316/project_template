@@ -105,18 +105,18 @@ class Job(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid"):
             else "N/A",
         }
     
-    def log_system_info(self, logger): 
+    def log_system_info(self, logger, artifact_uri): 
         system_information = self.get_system_info()
         logger.info("System Info: {}", system_information)
 
         # Log system information as an artifact
-        system_info_path = os.path.join(run.info.artifact_uri, "system_info.json")
+        system_info_path = os.path.join(artifact_uri, "system_info.json")
         with open(system_info_path, "w") as f:
             json.dump(system_information, f)
-        mlflow.log_artifact(system_info_path, artifact_path="system_info")
-        run_uri = run.info.artifact_uri
-        artifact_path = run_uri.split("/artifacts")[0]
+        mlflow.log_artifact(system_info_path)
+        # run_uri = self.run.info.artifact_uri
+        artifact_path = artifact_uri.split("/artifacts")[0]
         logger.info("Artifact path: {}", artifact_path)
         log_file = os.path.join(artifact_path, "TrainingJob.log")
         logger.add(log_file)
-        pyperclip.copy(log_file)
+        pyperclip.copy(log_file)    

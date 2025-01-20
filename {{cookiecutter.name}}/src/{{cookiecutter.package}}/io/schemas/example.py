@@ -2,7 +2,7 @@ import pandera.typing as papd
 import pandera as pa
 import pandera.typing.common as padt
 
-from .schemas import Schema
+from .._base import Schema
 
 
 class ExampleInputsSchema(Schema):

@@ -1,7 +1,7 @@
 from .example import ExampleMetric
 import typing as T
 import pydantic as pdt
-from .base import Metric
+from ._base import Metric
 
 MetricKind = ExampleMetric
 MetricsKind: T.TypeAlias = list[

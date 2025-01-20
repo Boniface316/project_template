@@ -7,7 +7,7 @@ import pydantic as pdt
 
 from ..io.schemas import Targets, Outputs
 
-from .base import Metric, MlflowThreshold
+from ._base import Metric, MlflowThreshold
 
 
 class ExampleMetric(Metric):

@@ -6,18 +6,14 @@ import typing as T
 import os
 import mlflow
 import pydantic as pdt
-import pyperclip
-import json
 
-from .base import Locals, Job
+from ._base import Locals, Job
 
 from ..services import MlflowService
 from ..signers import SignerKind, ExampleSigner
 from ..models import ModelKind, ExampleModel
 from ..metrics import MetricsKind, ExampleMetric
 from ..io import ReaderKind
-
-
 
 from ..io.splitters import SplitterKind
 from ..io.splitters import ExampleSplitter as TrainTestSplitter
@@ -73,21 +69,7 @@ class TrainingJob(Job):
         client = self.mlflow_service.client()
         logger.info("With client: {}", client.tracking_uri)
         with self.mlflow_service.run_context(run_config=self.run_config) as run:
-            # system_information = self.get_system_info()
-            # logger.info("System Info: {}", system_information)
-
-            # # Log system information as an artifact
-            # system_info_path = os.path.join(run.info.artifact_uri, "system_info.json")
-            # with open(system_info_path, "w") as f:
-            #     json.dump(system_information, f)
-            # mlflow.log_artifact(system_info_path, artifact_path="system_info")
-            # run_uri = run.info.artifact_uri
-            # artifact_path = run_uri.split("/artifacts")[0]
-            # logger.info("Artifact path: {}", artifact_path)
-            # log_file = os.path.join(artifact_path, "TrainingJob.log")
-            # logger.add(log_file)
-            # pyperclip.copy(log_file)
-            self.log_system_info(logger)
+            self.log_system_info(logger, run.info.artifact_uri)
             logger.info("With run context: {}", run.info)
             # data
             # - inputs

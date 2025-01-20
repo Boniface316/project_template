@@ -10,7 +10,7 @@ import typing as T
 import mlflow
 import mlflow.tracking as mt
 import pydantic as pdt
-from .base import Service
+from ._base import Service
 
 # %% SERVICES
 

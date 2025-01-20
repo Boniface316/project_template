@@ -4,7 +4,7 @@
 import numpy as np
 import typing as T
 
-from .base import Model
+from ._base import Model
 
 from ..io.schemas import Inputs, Outputs, OutputsSchema, Targets
 
