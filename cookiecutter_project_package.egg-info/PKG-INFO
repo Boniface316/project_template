@@ -1,0 +1,8 @@
+Metadata-Version: 2.2
+Name: cookiecutter-project-package
+Version: 1.0.0
+Summary: Build and deploy Python packages and Docker images for MLOps projects.
+Author: Boniface Yogendran
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt

@@ -8,7 +8,13 @@ import typing as T
 
 import pydantic as pdt
 from ..services import MlflowService, LoggerService, AlertsService
-
+import platform
+import psutil
+import torch
+import os
+import mlflow
+import json
+import pyperclip
 
 # %% TYPES
 
@@ -42,6 +48,7 @@ class Job(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid"):
         Returns:
             T.Self: return the current object.
         """
+
         self.logger_service.start()
         logger = self.logger_service.logger()
         logger.debug("\033[92m[START]\033[0m Logger service: {}", self.logger_service)
@@ -84,3 +91,32 @@ class Job(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid"):
         Returns:
             Locals: local job variables.
         """
+
+    def get_system_info(self) -> dict:
+        return {
+            "os": platform.system(),
+            "os_version": platform.version(),
+            "cpu": platform.processor(),
+            "cpu_count": psutil.cpu_count(logical=True),
+            "ram": f"{psutil.virtual_memory().total / (1024**3):.2f} GB",
+            "cuda_version": torch.version.cuda if torch.cuda.is_available() else "N/A",
+            "gpu": torch.cuda.get_device_name(0)
+            if torch.cuda.is_available()
+            else "N/A",
+        }
+    
+    def log_system_info(self, logger): 
+        system_information = self.get_system_info()
+        logger.info("System Info: {}", system_information)
+
+        # Log system information as an artifact
+        system_info_path = os.path.join(run.info.artifact_uri, "system_info.json")
+        with open(system_info_path, "w") as f:
+            json.dump(system_information, f)
+        mlflow.log_artifact(system_info_path, artifact_path="system_info")
+        run_uri = run.info.artifact_uri
+        artifact_path = run_uri.split("/artifacts")[0]
+        logger.info("Artifact path: {}", artifact_path)
+        log_file = os.path.join(artifact_path, "TrainingJob.log")
+        logger.add(log_file)
+        pyperclip.copy(log_file)

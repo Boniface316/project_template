@@ -1,7 +1,7 @@
 """Define trainable machine learning models."""
 
 # %% IMPORTS
-
+import numpy as np
 import typing as T
 
 from .base import Model
@@ -18,8 +18,9 @@ Params = dict[ParamKey, ParamValue]
 
 class ExampleModel(Model):
     KIND: T.Literal["ExampleModel"] = "ExampleModel"
+    params: int | None = None
 
-    @T.overide
+    @T.override
     def fit(self, inputs: Inputs, targets: Targets) -> "ExampleModel":
         print("Fitting the model with inputs and targets")
         self.params = {"dummy_param": 1}
@@ -30,17 +31,17 @@ class ExampleModel(Model):
         print("Returning the internal model")
         return 0
 
-    @T.overide
+    @T.override
     def predict(self, inputs: Inputs) -> Targets:
         num_rows = len(inputs)
-        prediction = [i for i in range(num_rows)]
+        prediction = np.random.randint(0, 10, size=num_rows)
 
         return Outputs({OutputsSchema.prediction: prediction}, index=inputs.index)
 
-    @T.overide
+    @T.override
     def explain_model(self):
         pass
 
-    @T.overide
+    @T.override
     def explain_samples(self, inputs: Inputs):
         pass

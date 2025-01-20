@@ -3,22 +3,26 @@
 # %% IMPORTS
 
 import typing as T
-
+import os
+import mlflow
+import pydantic as pdt
+import pyperclip
+import json
 
 from .base import Locals, Job
 
-import pydantic as pdt
+from ..services import MlflowService
+from ..signers import SignerKind, ExampleSigner
+from ..models import ModelKind, ExampleModel
+from ..metrics import MetricsKind, ExampleMetric
 from ..io import ReaderKind
+
+
 
 from ..io.splitters import SplitterKind
 from ..io.splitters import ExampleSplitter as TrainTestSplitter
-from ..io import schemas
-from ..services import MlflowService
-
-import os
-import mlflow
-
-from ..models import ModelKind, ExampleModel
+from ..io.schemas import Inputs, Targets, InputsSchema, TargetsSchema
+from ..registries import SaverKind, CustomSaver, RegisterKind, MlflowRegister
 
 # %% JOBS
 
@@ -48,45 +52,53 @@ class TrainingJob(Job):
     # # Model
     model: ModelKind = pdt.Field(ExampleModel(), discriminator="KIND")
     # # Metrics
-    # metrics: metrics_.MetricsKind = [metrics_.SklearnMetric()]
+    metrics: MetricsKind = [ExampleMetric()]
     # Splitter
     splitter: SplitterKind = pdt.Field(TrainTestSplitter(), discriminator="KIND")
     # # Saver
-    # saver: registries.SaverKind = pdt.Field(registries.CustomSaver(), discriminator="KIND")
+    saver: SaverKind = pdt.Field(CustomSaver(), discriminator="KIND")
     # # Signer
-    # signer: signers.SignerKind = pdt.Field(signers.InferSigner(), discriminator="KIND")
+    signer: SignerKind = pdt.Field(ExampleSigner(), discriminator="KIND")
     # # Registrer
     # # - avoid shadowing pydantic `register` pydantic function
-    # registry: registries.RegisterKind = pdt.Field(registries.MlflowRegister(), discriminator="KIND")
+    registry: RegisterKind = pdt.Field(MlflowRegister(), discriminator="KIND")
 
     @T.override
     def run(self) -> Locals:
         # services
         # - logger
         logger = self.logger_service.logger()
-        logger.add("TrainingJob_{time}.log")
         logger.info("With logger: {}", logger)
         # # - mlflow
         client = self.mlflow_service.client()
         logger.info("With client: {}", client.tracking_uri)
         with self.mlflow_service.run_context(run_config=self.run_config) as run:
-            experiment_id = run.info.experiment_id
-            run_id = run.info.run_id
-            # Get the URI of the current run
-            run_uri = client.get_run(run_id).info.artifact_uri
-            directory = os.path.join(run_uri, experiment_id, run_id)
-            logger.add(os.path.join(directory, "TrainingJob_{time}.log"))
+            # system_information = self.get_system_info()
+            # logger.info("System Info: {}", system_information)
+
+            # # Log system information as an artifact
+            # system_info_path = os.path.join(run.info.artifact_uri, "system_info.json")
+            # with open(system_info_path, "w") as f:
+            #     json.dump(system_information, f)
+            # mlflow.log_artifact(system_info_path, artifact_path="system_info")
+            # run_uri = run.info.artifact_uri
+            # artifact_path = run_uri.split("/artifacts")[0]
+            # logger.info("Artifact path: {}", artifact_path)
+            # log_file = os.path.join(artifact_path, "TrainingJob.log")
+            # logger.add(log_file)
+            # pyperclip.copy(log_file)
+            self.log_system_info(logger)
             logger.info("With run context: {}", run.info)
             # data
             # - inputs
             logger.info("Read inputs: {}", self.inputs)
             inputs_ = self.inputs.read()  # unchecked!
-            inputs = schemas.InputsSchema.check(inputs_)
+            inputs = InputsSchema.check(inputs_)
             logger.debug("- Inputs shape: {}", inputs.shape)
             # - targets
             logger.info("Read targets: {}", self.targets)
             targets_ = self.targets.read()  # unchecked!
-            targets = schemas.TargetsSchema.check(targets_)
+            targets = TargetsSchema.check(targets_)
             logger.debug("- Targets shape: {}", targets.shape)
             # lineage
             # - inputs
@@ -97,7 +109,7 @@ class TrainingJob(Job):
             # - targets
             logger.info("Log lineage: targets")
             targets_lineage = self.targets.lineage(
-                data=targets, name="targets", targets=schemas.TargetsSchema.cnt
+                data=targets, name="targets", targets=TargetsSchema.target
             )
             mlflow.log_input(dataset=targets_lineage, context=self.run_config.name)
             logger.debug("- Targets lineage: {}", targets_lineage.to_dict())
@@ -108,13 +120,13 @@ class TrainingJob(Job):
                 self.splitter.split(inputs=inputs, targets=targets)
             )
             # - inputs
-            inputs_train = T.cast(schemas.Inputs, inputs.iloc[train_index])
-            inputs_test = T.cast(schemas.Inputs, inputs.iloc[test_index])
+            inputs_train = T.cast(Inputs, inputs.iloc[train_index])
+            inputs_test = T.cast(Inputs, inputs.iloc[test_index])
             logger.debug("- Inputs train shape: {}", inputs_train.shape)
             logger.debug("- Inputs test shape: {}", inputs_test.shape)
             # - targets
-            targets_train = T.cast(schemas.Targets, targets.iloc[train_index])
-            targets_test = T.cast(schemas.Targets, targets.iloc[test_index])
+            targets_train = T.cast(Targets, targets.iloc[train_index])
+            targets_test = T.cast(Targets, targets.iloc[test_index])
             logger.debug("- Targets train shape: {}", targets_train.shape)
             logger.debug("- Targets test shape: {}", targets_test.shape)
             # model
@@ -125,30 +137,31 @@ class TrainingJob(Job):
             outputs_test = self.model.predict(inputs=inputs_test)
             logger.debug("- Outputs test shape: {}", outputs_test.shape)
             # metrics
-            # for i, metric in enumerate(self.metrics, start=1):
-            #     logger.info("{}. Compute metric: {}", i, metric)
-            #     score = metric.score(targets=targets_test, outputs=outputs_test)
-            #     client.log_metric(run_id=run.info.run_id, key=metric.name, value=score)
-            #     logger.debug("- Metric score: {}", score)
+            for i, metric in enumerate(self.metrics, start=1):
+                logger.info("{}. Compute metric: {}", i, metric.KIND)
+                score = metric.score(targets=targets_test, outputs=outputs_test)
+                client.log_metric(run_id=run.info.run_id, key=metric.name, value=score)
+                logger.debug("\033[93m- Metric score: {}\033[0m", score)
             # signer
-            # logger.info("Sign model: {}", self.signer)
-            # model_signature = self.signer.sign(inputs=inputs, outputs=outputs_test)
-            # logger.debug("- Model signature: {}", model_signature.to_dict())
+            logger.info("Sign model: {}", self.signer)
+            model_signature = self.signer.sign(inputs=inputs, outputs=outputs_test)
+            logger.debug("- Model signature: {}", model_signature.to_dict())
             # saver
-            # logger.info("Save model: {}", self.saver)
-            # model_info = self.saver.save(
-            #     model=self.model, signature=model_signature, input_example=inputs
-            # )
-            # logger.debug("- Model URI: {}", model_info.model_uri)
+            logger.info("Save model: {}", self.saver)
+            model_info = self.saver.save(
+                model=self.model, signature=model_signature, input_example=inputs
+            )
+            logger.debug("- Model URI: {}", model_info.model_uri)
             # register
-            # logger.info("Register model: {}", self.registry)
-            # model_version = self.registry.register(
-            #     name=self.mlflow_service.registry_name, model_uri=model_info.model_uri
-            # )
-            # logger.debug("- Model version: {}", model_version)
+            logger.info("Register model: {}", self.registry)
+            model_version = self.registry.register(
+                name=self.mlflow_service.registry_name, model_uri=model_info.model_uri
+            )
+            logger.debug("- Model version: {}", model_version)
             # notify
-            # self.alerts_service.notify(
-            #     title="Training Job Finished",
-            #     message=f"Model version: {model_version.version}",
-            # )
+            self.alerts_service.notify(
+                title="Training Job Finished",
+                message=f"Model version: {model_version.version}",
+            )
+        logger.info("Training job finished")
         return locals()

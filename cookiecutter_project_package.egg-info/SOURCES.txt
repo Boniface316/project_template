@@ -1,0 +1,7 @@
+LICENSE.txt
+pyproject.toml
+cookiecutter_project_package.egg-info/PKG-INFO
+cookiecutter_project_package.egg-info/SOURCES.txt
+cookiecutter_project_package.egg-info/dependency_links.txt
+cookiecutter_project_package.egg-info/top_level.txt
+unhooks/post_gen_project.py

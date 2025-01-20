@@ -45,7 +45,7 @@ class LoggerService(Service):
         config["sink"] = sinks.get(config["sink"], config["sink"])
         loguru.logger.add(**config)
 
-    def logger(self) -> loguru.Logger:
+    def logger(self) -> loguru.logger:
         """Return the main logger.
 
         Returns:

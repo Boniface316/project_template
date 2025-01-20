@@ -1,7 +1,7 @@
 import os
 import typing as T
 import pandas as pd
-from .reader import Reader, Lineage
+from .reader import Reader, Lineage, lineage
 from .writer import Writer
 
 
@@ -11,10 +11,6 @@ class ExampleReader(Reader):
     KIND: T.Literal["ExampleReader"] = "ExampleReader"
     path: str
     limit: int | None = None
-
-    def __init__(self):
-        self.create_input()
-        self.create_target()
 
     def create_input(self):
         inputs = {
@@ -37,10 +33,13 @@ class ExampleReader(Reader):
         df = pd.DataFrame(targets)
         df.set_index("index", inplace=True)
         os.makedirs("data", exist_ok=True)
-        df.to_csv("data/target.csv")
+        df.to_csv("data/targets.csv")
 
     def read(self) -> pd.DataFrame:
-        data = pd.read_csv(self.path)
+        if not os.path.exists(self.path):
+            self.create_input()
+            self.create_target()
+        data = pd.read_csv(self.path, index_col="index")
         if self.limit is not None:
             data = data.head(self.limit)
         return data
@@ -52,7 +51,7 @@ class ExampleReader(Reader):
         targets: str | None = None,
         predictions: str | None = None,
     ) -> Lineage:
-        pass
+        return lineage.from_pandas(data, name=name, targets=targets, predictions=predictions)
 
 
 class ExampleWriter(Writer):

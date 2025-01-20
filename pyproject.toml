@@ -11,8 +11,11 @@ authors = [{ name = "Boniface Yogendran"}]
 readme = "README.md"
 requires-python = ">=3.12"
 license = { file = "LICENSE" }
+dependencies = [
+    "gtasks @ git+https://github.com/Boniface316/tasks.git"
+]
 
-# DEPENDENCIES
+
 
 [dependency-groups]
 dev = [

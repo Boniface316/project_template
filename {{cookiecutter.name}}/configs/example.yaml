@@ -1,0 +1,8 @@
+job:
+  KIND: TrainingJob
+  inputs:
+    KIND: ExampleReader
+    path: data/input.csv
+  targets:
+    KIND: ExampleReader
+    path: data/targets.csv

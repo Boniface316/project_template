@@ -1,5 +1,6 @@
 from .training import TrainingJob
+from .tuning import TuningJob
 
-JobKind = TrainingJob
+JobKind = TrainingJob | TuningJob
 
-__all__ = ["TrainingJob"]
+__all__ = ["TrainingJob", "TuningJob", "JobKind"]
