@@ -51,7 +51,9 @@ class ExampleReader(Reader):
         targets: str | None = None,
         predictions: str | None = None,
     ) -> Lineage:
-        return lineage.from_pandas(data, name=name, targets=targets, predictions=predictions)
+        return lineage.from_pandas(
+            data, name=name, targets=targets, predictions=predictions
+        )
 
 
 class ExampleWriter(Writer):

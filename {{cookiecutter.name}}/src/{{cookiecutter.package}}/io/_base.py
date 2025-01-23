@@ -18,6 +18,7 @@ Lineage: T.TypeAlias = lineage.PandasDataset
 
 # %% READERS
 
+
 class Reader(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid"):
     """Base class for a dataset reader.
 
@@ -59,7 +60,10 @@ class Reader(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid"):
         Returns:
             Lineage: lineage information.
         """
+
+
 # %% WRITERS
+
 
 class Writer(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid"):
     """Base class for a dataset writer.
@@ -115,11 +119,14 @@ class Schema(pa.DataFrameModel):
         """
         return T.cast(papd.DataFrame[TSchema], cls.validate(data))
 
+
 class InputsSchema(Schema):
     pass
 
+
 class TargetsSchema(Schema):
     pass
+
 
 Inputs = papd.DataFrame[InputsSchema]
 Targets = papd.DataFrame[TargetsSchema]
@@ -130,6 +137,7 @@ Targets = papd.DataFrame[TargetsSchema]
 Index = npt.NDArray[np.int64]
 TrainTestIndex = tuple[Index, Index]
 TrainTestSplits = T.Iterator[TrainTestIndex]
+
 
 class Splitter(abc.ABC, pdt.BaseModel, strict=True, frozen=True, extra="forbid"):
     """Base class for a splitter.

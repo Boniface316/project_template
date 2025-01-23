@@ -6,3 +6,5 @@ Author: Boniface Yogendran
 Requires-Python: >=3.12
 Description-Content-Type: text/markdown
 License-File: LICENSE.txt
+Requires-Dist: gtasks@ git+https://github.com/Boniface316/tasks.git
+Requires-Dist: invoke>=2.2.0

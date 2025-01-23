@@ -1,5 +1,10 @@
-
-from .example import CustomLoader, CustomSaver, MlflowRegister, BuiltinLoader, BuiltinSaver
+from .example import (
+    CustomLoader,
+    CustomSaver,
+    MlflowRegister,
+    BuiltinLoader,
+    BuiltinSaver,
+)
 
 SaverKind = CustomSaver | BuiltinSaver
 LoaderKind = CustomLoader | BuiltinLoader

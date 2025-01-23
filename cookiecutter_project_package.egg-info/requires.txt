@@ -1,0 +1,2 @@
+gtasks@ git+https://github.com/Boniface316/tasks.git
+invoke>=2.2.0
