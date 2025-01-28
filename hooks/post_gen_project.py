@@ -1,7 +1,6 @@
 import subprocess
 import sys
 
-
 def run_command(command):
     result = subprocess.run(
         command, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
@@ -74,5 +73,8 @@ def create_and_push_github_repo():
 
 
 if __name__ == "__main__":
+    repo_confirmation = input("Do you want to create and push the GitHub repository? [y/n]: ")
+    if repo_confirmation.lower() not in ["y", "yes"]:
+        sys.exit(0)
     print("Creating and pushing GitHub repository...")
     create_and_push_github_repo()
